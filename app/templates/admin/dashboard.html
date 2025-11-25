@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard - HMS{% endblock %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card bg-info text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Doctors</h5>
+                <p class="card-text fs-3">{{ doctors_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Patients</h5>
+                <p class="card-text fs-3">{{ patients_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Appointments</h5>
+                <p class="card-text fs-3">{{ appointments_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Buttons Container -->
+<div class="mb-3">
+    <a href="{{ url_for('admin.doctors') }}" class="btn btn-primary me-2">Manage Doctors</a>
+    <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-success">Add Doctor</a>
+    <a href="{{ url_for('admin.add_patient') }}" class="btn btn-success ms-2">Add Patient</a>
+    <a href="{{ url_for('admin.add_appointment') }}" class="btn btn-success ms-2">Add Appointment</a>
+</div>
+{% endblock %}
