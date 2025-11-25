@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Add Appointment - HMS{% endblock %}
+{% block content %}
+<h2>Book Appointment (Admin)</h2>
+
+<form method="POST" action="{{ url_for('admin.add_appointment') }}">
+  <!-- Patient Selection -->
+  <div class="mb-3">
+    <label for="patient_id" class="form-label">Select Patient</label>
+    <select class="form-select" id="patient_id" name="patient_id" required>
+      <option value="" disabled selected>Select a patient</option>
+      {% for patient in patients %}
+        <option value="{{ patient.id }}">{{ patient.name }} ({{ patient.email }})</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Doctor Selection -->
+  <div class="mb-3">
+    <label for="doctor_id" class="form-label">Select Doctor</label>
+    <select class="form-select" id="doctor_id" name="doctor_id" required>
+      <option value="" disabled selected>Select a doctor</option>
+      {% for doctor in doctors %}
+        <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Appointment Date/Time -->
+  <div class="mb-3">
+    <label for="appointment_date" class="form-label">Date & Time</label>
+    <input type="datetime-local" class="form-control" id="appointment_date" name="appointment_date" required>
+  </div>
+
+  <!-- Reason -->
+  <div class="mb-3">
+    <label for="reason" class="form-label">Reason for Visit</label>
+    <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for appointment" required></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Book Appointment</button>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
