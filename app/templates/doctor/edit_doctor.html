@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Update Doctor - HMS{% endblock %}
+{% block content %}
+<h2>Edit Doctor Profile</h2>
+
+<form method="POST" action="{{ url_for('admin.edit_doctor', doctor_id=doctor.id) }}">
+  <div class="mb-3">
+    <label for="name" class="form-label">Doctor Name</label>
+    <input type="text" class="form-control" id="name" name="name" value="{{ doctor.name }}" required>
+  </div>
+  
+  <div class="mb-3">
+    <label for="specialty" class="form-label">Specialization</label>
+    <input type="text" class="form-control" id="specialty" name="specialty" value="{{ doctor.specialty }}" required>
+  </div>
+  
+  <div class="mb-3">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="email" name="email" value="{{ doctor.email }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="availability" class="form-label">Availability</label>
+    <textarea class="form-control" id="availability" name="availability" rows="3" required>{{ doctor.availability }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="Active" {% if doctor.status == 'Active' %}selected{% endif %}>Active</option>
+      <option value="Inactive" {% if doctor.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-success">Update Doctor</button>
+  <a href="{{ url_for('admin.doctors') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Add Treatment - HMS{% endblock %}
+{% block content %}
+<h2>Treatment for {{ appointment.patient.name }} on {{ appointment.appointment_date | format_datetime }}</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.diagnosis.label(class="form-label") }}
+        {{ form.diagnosis(class="form-control") }}
+        {% for error in form.diagnosis.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+    <div class="mb-3">
+        {{ form.prescription.label(class="form-label") }}
+        {{ form.prescription(class="form-control") }}
+        {% for error in form.prescription.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+    <div class="mb-3">
+        {{ form.notes.label(class="form-label") }}
+        {{ form.notes(class="form-control") }}
+    </div>
+    {{ form.submit(class="btn btn-success") }}
+    <a href="{{ url_for('doctor.dashboard') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
