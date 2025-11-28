@@ -1,7 +1,6 @@
 from datetime import datetime
 from sqlalchemy import Enum
 import enum
-from flask_login import UserMixin
 from app.database import db  # Assuming db is initialized in app/__init__.py
 
 class StatusEnum(enum.Enum):
@@ -12,7 +11,7 @@ class StatusEnum(enum.Enum):
     inactive = "Inactive"
     blacklisted = "Blacklisted"
 
-class Admin(db.Model, UserMixin):
+class Admin(db.Model):
     __tablename__ = 'admin'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -23,7 +22,7 @@ class Admin(db.Model, UserMixin):
     def __repr__(self):
         return f'<Admin {self.username}>'
 
-class Doctor(db.Model, UserMixin):
+class Doctor(db.Model):
     __tablename__ = 'doctor'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -35,7 +34,7 @@ class Doctor(db.Model, UserMixin):
     def __repr__(self):
         return f'<Doctor {self.name}>'
 
-class Patient(db.Model, UserMixin):
+class Patient(db.Model):
     __tablename__ = 'patient'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
