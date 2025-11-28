@@ -6,8 +6,8 @@ from app.routes.auth_routes import auth_bp
 from app.routes.admin_routes import admin_bp
 from app.routes.doctor_routes import doctor_bp
 from app.routes.patient_routes import patient_bp
+from app.routes import home_bp
 from app.database import db
-from .extensions import login_manager
 from .utils import format_datetime
 
 def create_app():
@@ -23,29 +23,6 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
 
-    login_manager.init_app(app)  # Important
-
-    login_manager.login_view = 'auth.login'  # redirect for @login_required users not logged in
-    login_manager.login_message_category = 'info'
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        from app.models import Admin, Doctor, Patient  # import inside factory to avoid circular imports
-
-        user = Admin.query.get(int(user_id))
-        if user:
-            user.role = 'admin'
-            return user
-        user = Doctor.query.get(int(user_id))
-        if user:
-            user.role = 'doctor'
-            return user
-        user = Patient.query.get(int(user_id))
-        if user:
-            user.role = 'patient'
-            return user
-        return None
-
     with app.app_context():
         db.create_all()
         create_default_admin()
@@ -54,6 +31,7 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(doctor_bp)
     app.register_blueprint(patient_bp)
+    app.register_blueprint(home_bp)
 
     return app
 
