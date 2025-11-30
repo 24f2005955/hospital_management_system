@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}My Treatments - HMS{% endblock %}
+{% block content %}
+
+<h2>My Treatment History</h2>
+
+{% if treatments %}
+  <div class="table-responsive mt-3">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Doctor</th>
+          <th>Diagnosis</th>
+          <th>Prescription</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tr in treatments %}
+        <tr>
+          <td>{{ tr.treatment_date | format_datetime }}</td>
+          <td>{{ tr.appointment.doctor.name }}</td>
+          <td>{{ tr.diagnosis or 'N/A' }}</td>
+          <td>{{ tr.prescription or 'N/A' }}</td>
+          <td>{{ tr.notes or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted mt-3">No treatments recorded yet.</p>
+{% endif %}
+
+<a href="{{ url_for('patient.dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+
+{% endblock %}

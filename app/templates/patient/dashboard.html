@@ -1,60 +1,107 @@
 {% extends "base.html" %}
 {% block title %}Patient Dashboard - HMS{% endblock %}
 {% block content %}
-<h2>Welcome {{ current_user.name }}</h2>
 
+<h2>Welcome {{ patient_name }}</h2>
+
+<h4 class="mt-4">Departments</h4>
+{% if departments %}
+  <div class="list-group mb-4">
+    {% for dept in departments %}
+      <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ dept.name }}</strong><br>
+          <small class="text-muted">
+            {{ dept.description[:100] ~ '...' if dept.description and dept.description|length > 100 else dept.description or '' }}
+          </small>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-muted">No departments available.</p>
+{% endif %}
+
+<!-- Upcoming appointments -->
 <h4>Your Upcoming Appointments</h4>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Doctor</th>
-            <th>Specialty</th>
-            <th>Date & Time</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for appt in appointments if appt.status == 'Booked' %}
-        <tr>
-            <td>{{ appt.doctor.name }}</td>
-            <td>{{ appt.doctor.specialty }}</td>
-            <td>{{ appt.appointment_date | format_datetime }}</td>
-            <td>{{ appt.status }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="4">No upcoming appointments.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
 
-<h4>Your Past Appointments & Treatments</h4>
-<table class="table table-light table-striped">
-    <thead>
+{% if upcoming_appointments %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
         <tr>
-            <th>Doctor</th>
-            <th>Date</th>
-            <th>Diagnosis</th>
-            <th>Prescription</th>
-            <th>Notes</th>
+          <th>Doctor</th>
+          <th>Department</th>
+          <th>Date &amp; Time</th>
+          <th>Status</th>
         </tr>
-    </thead>
-    <tbody>
-        {% for appt in appointments if appt.status == 'Completed' %}
+      </thead>
+      <tbody>
+        {% for appt in upcoming_appointments %}
+        <tr>
+          <td>{{ appt.doctor.name }}</td>
+          <td>
+            {% if appt.doctor.department %}
+              {{ appt.doctor.department.name }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ appt.appointment_start | format_datetime }}</td>
+          <td>
+            <span class="badge
+              {% if appt.status.name == 'booked' %}bg-primary
+              {% elif appt.status.name == 'completed' %}bg-success
+              {% elif appt.status.name == 'cancelled' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ appt.status.value }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No upcoming appointments.</p>
+{% endif %}
+
+<!-- Past appointments & treatments -->
+<h4 class="mt-4">Your Past Appointments &amp; Treatments</h4>
+
+{% if past_appointments %}
+  <div class="table-responsive">
+    <table class="table table-light table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Diagnosis</th>
+          <th>Prescription</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for appt in past_appointments %}
         {% set treatment = appt.treatment %}
         <tr>
-            <td>{{ appt.doctor.name }}</td>
-            <td>{{ appt.appointment_date | format_datetime('%Y-%m-%d') }}</td>
-            <td>{{ treatment.description if treatment else 'N/A' }}</td>
-            <td>{{ treatment.prescription if treatment else 'N/A' }}</td>
-            <td>{{ treatment.notes if treatment else '' }}</td>
+          <td>{{ appt.doctor.name }}</td>
+          <td>{{ appt.appointment_start | format_datetime }}</td>
+          <td>{{ treatment.diagnosis if treatment else 'N/A' }}</td>
+          <td>{{ treatment.prescription if treatment else 'N/A' }}</td>
+          <td>{{ treatment.notes if treatment else '' }}</td>
         </tr>
-        {% else %}
-        <tr><td colspan="5">No completed appointments found.</td></tr>
         {% endfor %}
-    </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No completed appointments found.</p>
+{% endif %}
 
-<a href="{{ url_for('patient.book_appointment') }}" class="btn btn-primary">Book New Appointment</a>
-<a href="{{ url_for('patient.edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
+<div class="mt-3">
+  <a href="{{ url_for('patient.book_appointment') }}" class="btn btn-primary me-2">Book New Appointment</a>
+  <a href="{{ url_for('patient.profile') }}" class="btn btn-secondary">Edit Profile</a>
+</div>
 
 {% endblock %}
