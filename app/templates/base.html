@@ -8,7 +8,16 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('auth.login') }}">Hospital System</a>
+        <a class="navbar-brand" href="
+        {% if session.get('user_role') == 'admin' %}
+            {{ url_for('admin.dashboard') }}
+        {% elif session.get('user_role') == 'doctor' %}
+            {{ url_for('doctor.dashboard') }}
+        {% elif session.get('user_role') == 'patient' %}
+            {{ url_for('patient.dashboard') }}
+        {% else %}
+            {{ url_for('auth.login') }}
+        {% endif %}">Hospital System</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 {% if session.get('user_id') %}

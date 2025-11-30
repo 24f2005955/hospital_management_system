@@ -16,11 +16,3 @@ def format_datetime(value, format='%Y-%m-%d %H:%M'):
         return ""
     return value.strftime(format)
 
-def parse_availability_string(avail_str):
-    """
-    Simple parsing example: expects 'Mon-Fri 9am-5pm'
-    Can be extended to return structured data like JSON for availability slots.
-    """
-    return avail_str.strip()
-
-# Add other helper functions as needed for your app

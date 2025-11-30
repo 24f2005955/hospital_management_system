@@ -1,5 +1,49 @@
 {% extends "base.html" %}
-{% block title %} MAD1 - HMS{% endblock %}
+{% block title %}MAD1 - Hospital Management System{% endblock %}
 {% block content %}
+
+<div class="py-5">
+  <div class="row align-items-center">
+    <div class="col-md-7">
+      <h1 class="display-5 fw-bold mb-3">Hospital Management System</h1>
+      <p class="lead">
+        A unified portal for admins, doctors, and patients to manage appointments,
+        medical records, and daily schedules efficiently.
+      </p>
+      <p class="mb-4">
+        Log in with your role to access your dashboard, or register as a patient to
+        book your first appointment.
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+          Login
+        </a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary btn-lg">
+          Patient Register
+        </a>
+      </div>
+    </div>
+    <div class="col-md-5 mt-4 mt-md-0">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          Quick Overview
+        </div>
+        <div class="card-body">
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <strong>Admin:</strong> Manage doctors, patients, and all appointments.
+            </li>
+            <li class="mb-2">
+              <strong>Doctor:</strong> View schedule, update treatments, and review patient history.
+            </li>
+            <li class="mb-2">
+              <strong>Patient:</strong> Book, cancel, and view appointments and treatment records.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
