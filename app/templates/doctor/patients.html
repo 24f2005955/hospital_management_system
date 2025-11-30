@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Patients - HMS{% endblock %}
+{% block content %}
+
+<h2>My Patients</h2>
+
+{% if patients %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th style="width: 130px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for patient in patients %}
+        <tr>
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.age or '-' }}</td>
+          <td>{{ patient.gender|capitalize if patient.gender else '-' }}</td>
+          <td>{{ patient.email }}</td>
+          <td>{{ patient.phone }}</td>
+          <td>
+            <a href="{{ url_for('doctor.patient_history', patient_id=patient.id) }}"
+               class="btn btn-sm btn-primary">
+              View History
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No patients assigned yet.</p>
+{% endif %}
+
+{% endblock %}

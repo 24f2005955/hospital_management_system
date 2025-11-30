@@ -1,35 +1,73 @@
 {% extends "base.html" %}
 {% block title %}Doctor Dashboard - HMS{% endblock %}
 {% block content %}
-<h2>Welcome Dr. {{ current_user.name }}</h2>
 
-<h4>Upcoming Appointments</h4>
-<table class="table table-striped">
-    <thead>
+<h2>Welcome Dr. {{ session.get('doctor_name') }}</h2>
+
+<h4 class="mt-4">Upcoming Appointments</h4>
+
+{% if appointments %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
         <tr>
-            <th>Patient Name</th>
-            <th>Date & Time</th>
-            <th>Status</th>
-            <th>Action</th>
+          <th>Patient Name</th>
+          <th>Date &amp; Time</th>
+          <th>Status</th>
+          <th style="width: 230px;">Actions</th>
         </tr>
-    </thead>
-    <tbody>
+      </thead>
+      <tbody>
         {% for appt in appointments %}
         <tr>
-            <td>{{ appt.patient.name }}</td>
-            <td>{{ appt.appointment_date | format_datetime }}</td>
-            <td>{{ appt.status }}</td>
-            <td>
-                {% if appt.status == 'Booked' %}
-                <a href="{{ url_for('doctor.add_treatment', appointment_id=appt.id) }}" class="btn btn-sm btn-primary">Add Treatment</a>
-                {% else %}
-                <span class="text-muted">Completed</span>
-                {% endif %}
-            </td>
+          <td>{{ appt.patient.name }}</td>
+          <td>{{ appt.appointment_start | format_datetime }}</td>
+          <td>
+            <span class="badge
+              {% if appt.status.name == 'booked' %}bg-primary
+              {% elif appt.status.name == 'completed' %}bg-success
+              {% elif appt.status.name == 'cancelled' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ appt.status.value }}
+            </span>
+          </td>
+          <td>
+            {% if appt.status.name == 'booked' %}
+              <a href="{{ url_for('doctor.add_treatment', appointment_id=appt.id) }}"
+                 class="btn btn-sm btn-primary me-1">
+                Add / Edit Treatment
+              </a>
+              <form method="POST"
+                    action="{{ url_for('doctor.update_appointment_status', appointment_id=appt.id) }}"
+                    class="d-inline">
+                <input type="hidden" name="status" value="completed">
+                <button type="submit" class="btn btn-sm btn-success me-1">
+                  Mark Completed
+                </button>
+              </form>
+              <form method="POST"
+                    action="{{ url_for('doctor.update_appointment_status', appointment_id=appt.id) }}"
+                    class="d-inline"
+                    onsubmit="return confirm('Cancel this appointment?');">
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="btn btn-sm btn-danger">
+                  Cancel
+                </button>
+              </form>
+            {% else %}
+              <a href="{{ url_for('doctor.add_treatment', appointment_id=appt.id) }}"
+                 class="btn btn-sm btn-outline-secondary">
+                View / Edit Treatment
+              </a>
+            {% endif %}
+          </td>
         </tr>
-        {% else %}
-        <tr><td colspan="4">No upcoming appointments.</td></tr>
         {% endfor %}
-    </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No upcoming appointments.</p>
+{% endif %}
+
 {% endblock %}
