@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Add Department - HMS{% endblock %}
+{% block content %}
+<form method="POST" action="{{ url_for('admin.add_department') }}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Department Name</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Department</button>
+</form>
+{% endblock %}

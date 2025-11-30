@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Manage Doctors - HMS{% endblock %}
+{% block content %}
+
+<h2>Manage Doctors</h2>
+
+<form method="GET" action="{{ url_for('admin.search_doctors') }}" class="mb-3">
+  <div class="row g-2">
+    <div class="col-md-6">
+      <input type="text" name="query" class="form-control"
+             placeholder="Search by name or email"
+             value="{{ query or '' }}">
+    </div>
+    <div class="col-md-4">
+      <select name="department_id" class="form-select">
+        <option value="">All Departments</option>
+        {% for dept in departments %}
+          <option value="{{ dept.id }}"
+                  {% if selected_department and selected_department|int == dept.id %}selected{% endif %}>
+            {{ dept.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 d-grid">
+      <button class="btn btn-primary" type="submit">Search</button>
+    </div>
+  </div>
+</form>
+
+<a href="{{ url_for('admin.add_doctor') }}" class="btn btn-success mb-3">Add New Doctor</a>
+
+{% if doctors %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th style="width: 160px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doctor in doctors %}
+        <tr>
+          <td>{{ doctor.name }}</td>
+          <td>
+            {% if doctor.department %}
+              {{ doctor.department.name }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>{{ doctor.email }}</td>
+          <td>{{ doctor.phone or '-' }}</td>
+          <td>
+            <span class="badge
+              {% if doctor.status.name == 'active' %}bg-success
+              {% elif doctor.status.name == 'inactive' %}bg-secondary
+              {% elif doctor.status.name == 'blacklisted' %}bg-danger
+              {% else %}bg-light text-dark{% endif %}">
+              {{ doctor.status.value }}
+            </span>
+          </td>
+          <td>
+            <a href="{{ url_for('admin.edit_doctor', doctor_id=doctor.id) }}"
+               class="btn btn-sm btn-warning me-1">Edit</a>
+            <form method="POST"
+                  action="{{ url_for('admin.delete_doctor', doctor_id=doctor.id) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Are you sure you want to delete this doctor?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No doctors found.</p>
+{% endif %}
+
+{% endblock %}

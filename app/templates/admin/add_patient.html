@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Add Patient - HMS{% endblock %}
+{% block content %}
+
+<h2>Add New Patient</h2>
+
+<form method="POST" action="{{ url_for('admin.add_patient') }}">
+  <div class="mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input type="text" class="form-control" id="name" name="name"
+           placeholder="Enter patient's full name" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="age" class="form-label">Age</label>
+    <input type="number" class="form-control" id="age" name="age"
+           min="0" placeholder="e.g. 30" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="gender" class="form-label">Gender</label>
+    <select class="form-select" id="gender" name="gender" required>
+      <option value="" selected disabled>Select gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="other">Other</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" id="email" name="email"
+           placeholder="Enter email" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="phone" class="form-label">Phone</label>
+    <input type="text" class="form-control" id="phone" name="phone"
+           placeholder="Enter phone number" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="address" class="form-label">Address</label>
+    <textarea class="form-control" id="address" name="address" rows="2"
+              placeholder="Enter address (optional)"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="notes" class="form-label">Notes</label>
+    <textarea class="form-control" id="notes" name="notes" rows="2"
+              placeholder="Any additional notes (optional)"></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="" selected disabled>Select status</option>
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+      <option value="blacklisted">Blacklisted</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="password" name="password"
+           placeholder="Set login password" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Patient</button>
+  <a href="{{ url_for('admin.search_patients') }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

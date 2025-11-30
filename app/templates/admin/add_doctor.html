@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Add Doctor - HMS{% endblock %}
+{% block content %}
+
+<h2>Add New Doctor</h2>
+
+<form method="POST" action="{{ url_for('admin.add_doctor') }}">
+  <!-- Name -->
+  <div class="mb-3">
+    <label for="name" class="form-label">Doctor Name</label>
+    <input type="text" class="form-control" id="name" name="name"
+           placeholder="Enter doctor name" required>
+  </div>
+
+  <!-- Department / Specialization -->
+  <div class="mb-3">
+    <label for="department_id" class="form-label">Department / Specialization</label>
+    <select class="form-select" id="department_id" name="department_id" required>
+      <option value="" selected disabled>Select a department</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}">{{ dept.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Email -->
+  <div class="mb-3">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="email" name="email"
+           placeholder="Enter email" required>
+  </div>
+
+  <!-- Phone -->
+  <div class="mb-3">
+    <label for="phone" class="form-label">Phone</label>
+    <input type="text" class="form-control" id="phone" name="phone"
+           placeholder="Enter phone number">
+  </div>
+
+  <!-- Years of experience -->
+  <div class="mb-3">
+    <label for="years_of_experience" class="form-label">Years of Experience</label>
+    <input type="number" class="form-control" id="years_of_experience"
+           name="years_of_experience" min="0" placeholder="e.g. 5">
+  </div>
+
+  <!-- Bio -->
+  <div class="mb-3">
+    <label for="bio" class="form-label">Short Bio / Profile</label>
+    <textarea class="form-control" id="bio" name="bio" rows="3"
+              placeholder="Enter brief profile or qualifications"></textarea>
+  </div>
+
+  <!-- Status -->
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="active" selected>Active</option>
+      <option value="inactive">Inactive</option>
+      <option value="blacklisted">Blacklisted</option>
+    </select>
+  </div>
+
+  <!-- Password -->
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input type="password" class="form-control" id="password" name="password"
+           placeholder="Set login password" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add Doctor</button>
+  <a href="{{ url_for('admin.search_doctors') }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Search Patients - HMS{% endblock %}
+{% block content %}
+
+<h2>Search Patients</h2>
+
+<form method="POST" action="{{ url_for('admin.search_patients') }}" class="mb-3">
+  <div class="input-group">
+    <input type="text" name="query" class="form-control"
+           placeholder="Enter patient name, email, or phone"
+           value="" required>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
+
+<a href="{{ url_for('admin.add_patient') }}" class="btn btn-success mb-3">Add New Patient</a>
+
+{% if patients %}
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th style="width: 160px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for patient in patients %}
+        <tr>
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.age or '-' }}</td>
+          <td>{{ patient.gender|capitalize if patient.gender else '-' }}</td>
+          <td>{{ patient.email }}</td>
+          <td>{{ patient.phone }}</td>
+          <td>
+            <span class="badge
+              {% if patient.status.name == 'active' %}bg-success
+              {% elif patient.status.name == 'inactive' %}bg-secondary
+              {% elif patient.status.name == 'blacklisted' %}bg-danger
+              {% else %}bg-light text-dark{% endif %}">
+              {{ patient.status.value }}
+            </span>
+          </td>
+          <td>
+            <a href="{{ url_for('admin.edit_patient', patient_id=patient.id) }}"
+               class="btn btn-sm btn-warning me-1">Edit</a>
+            <form method="POST"
+                  action="{{ url_for('admin.delete_patient', patient_id=patient.id) }}"
+                  class="d-inline"
+                  onsubmit="return confirm('Are you sure you want to delete this patient?');">
+              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted">No patients found.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,39 +1,97 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard - HMS{% endblock %}
 {% block content %}
+
 <h2>Admin Dashboard</h2>
-<div class="row">
-    <div class="col-md-4">
-        <div class="card bg-info text-white mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Doctors</h5>
-                <p class="card-text fs-3">{{ doctors_count }}</p>
-            </div>
-        </div>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card bg-info text-white mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Registered Doctors</h5>
+        <p class="card-text fs-3">{{ doctors_count }}</p>
+      </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Patients</h5>
-                <p class="card-text fs-3">{{ patients_count }}</p>
-            </div>
-        </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-success text-white mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Registered Patients</h5>
+        <p class="card-text fs-3">{{ patients_count }}</p>
+      </div>
     </div>
-    <div class="col-md-4">
-        <div class="card bg-warning text-dark mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Appointments</h5>
-                <p class="card-text fs-3">{{ appointments_count }}</p>
-            </div>
-        </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card bg-warning text-dark mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Total Appointments</h5>
+        <p class="card-text fs-3">{{ appointments_count }}</p>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Buttons Container -->
-<div class="mb-3">
-    <a href="{{ url_for('admin.doctors') }}" class="btn btn-primary me-2">Manage Doctors</a>
-    <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-success">Add Doctor</a>
-    <a href="{{ url_for('admin.add_patient') }}" class="btn btn-success ms-2">Add Patient</a>
-    <a href="{{ url_for('admin.add_appointment') }}" class="btn btn-success ms-2">Add Appointment</a>
+<!-- Quick actions -->
+<div class="mb-4">
+  <a href="{{ url_for('admin.search_doctors') }}" class="btn btn-primary me-2">Manage Doctors</a>
+  <a href="{{ url_for('admin.search_patients') }}" class="btn btn-primary me-2">Manage Patients</a>
+  <a href="{{ url_for('admin.add_doctor') }}" class="btn btn-success me-2">Add Doctor</a>
+  <a href="{{ url_for('admin.add_patient') }}" class="btn btn-success me-2">Add Patient</a>
+  <a href="{{ url_for('admin.add_appointment') }}" class="btn btn-success">Add Appointment</a>
+  <a href="{{ url_for('admin.search_departments') }}" class="btn btn-primary ms-2">Manage Departments</a>
 </div>
+
+<!-- Upcoming appointments list -->
+<div class="card">
+  <div class="card-header">
+    Upcoming Appointments
+  </div>
+  <div class="card-body p-0">
+    {% if upcoming_appointments %}
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Date &amp; Time</th>
+              <th>Patient</th>
+              <th>Doctor</th>
+              <th>Department</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appt in upcoming_appointments %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ appt.appointment_start|format_datetime }}</td>
+              <td>{{ appt.patient.name }}</td>
+              <td>{{ appt.doctor.name }}</td>
+              <td>
+                {% if appt.doctor.department %}
+                  {{ appt.doctor.department.name }}
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>
+                <span class="badge
+                  {% if appt.status.name == 'booked' %}bg-primary
+                  {% elif appt.status.name == 'completed' %}bg-success
+                  {% elif appt.status.name == 'cancelled' %}bg-danger
+                  {% else %}bg-secondary{% endif %}">
+                  {{ appt.status.value }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="m-3 text-muted">No upcoming appointments.</p>
+    {% endif %}
+  </div>
+</div>
+
 {% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Update Doctor - HMS{% endblock %}
+{% block content %}
+
+<h2>Edit Doctor Profile</h2>
+
+<form method="POST" action="{{ url_for('admin.edit_doctor', doctor_id=doctor.id) }}">
+  <!-- Name -->
+  <div class="mb-3">
+    <label for="name" class="form-label">Doctor Name</label>
+    <input type="text" class="form-control" id="name" name="name"
+           value="{{ doctor.name }}" required>
+  </div>
+
+  <!-- Department / Specialization -->
+  <div class="mb-3">
+    <label for="department_id" class="form-label">Department / Specialization</label>
+    <select class="form-select" id="department_id" name="department_id" required>
+      <option value="" disabled>Select a department</option>
+      {% for dept in departments %}
+        <option value="{{ dept.id }}"
+                {% if doctor.department_id == dept.id %}selected{% endif %}>
+          {{ dept.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <!-- Email -->
+  <div class="mb-3">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="email" name="email"
+           value="{{ doctor.email }}" required>
+  </div>
+
+  <!-- Phone -->
+  <div class="mb-3">
+    <label for="phone" class="form-label">Phone</label>
+    <input type="text" class="form-control" id="phone" name="phone"
+           value="{{ doctor.phone or '' }}" placeholder="Enter phone number">
+  </div>
+
+  <!-- Years of experience -->
+  <div class="mb-3">
+    <label for="years_of_experience" class="form-label">Years of Experience</label>
+    <input type="number" class="form-control" id="years_of_experience"
+           name="years_of_experience" min="0"
+           value="{{ doctor.years_of_experience or '' }}">
+  </div>
+
+  <!-- Bio -->
+  <div class="mb-3">
+    <label for="bio" class="form-label">Short Bio / Profile</label>
+    <textarea class="form-control" id="bio" name="bio" rows="3"
+              placeholder="Enter brief profile or qualifications">{{ doctor.bio or '' }}</textarea>
+  </div>
+
+  <!-- Status -->
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="active" {% if doctor.status.name == 'active' or doctor.status.name == 'ACTIVE' %}selected{% endif %}>Active</option>
+      <option value="inactive" {% if doctor.status.name == 'inactive' or doctor.status.name == 'INACTIVE' %}selected{% endif %}>Inactive</option>
+      <option value="blacklisted" {% if doctor.status.name == 'blacklisted' or doctor.status.name == 'BLACKLISTED' %}selected{% endif %}>Blacklisted</option>
+    </select>
+  </div>
+
+  <!-- Optional password reset -->
+  <div class="mb-3">
+    <label for="password" class="form-label">Reset Password (optional)</label>
+    <input type="password" class="form-control" id="password" name="password"
+           placeholder="Leave blank to keep existing password">
+  </div>
+
+  <button type="submit" class="btn btn-success">Update Doctor</button>
+  <a href="{{ url_for('admin.search_doctors') }}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

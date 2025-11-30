@@ -1,44 +1,159 @@
 {% extends "base.html" %}
-{% block title %}Add Appointment - HMS{% endblock %}
+{% block title %}Book Appointment - HMS{% endblock %}
 {% block content %}
-<h2>Book Appointment (Admin)</h2>
 
-<form method="POST" action="{{ url_for('admin.add_appointment') }}">
-  <!-- Patient Selection -->
+<h2>
+  {% if patient %}Book Appointment{% else %}Book Appointment (Admin){% endif %}
+</h2>
+
+<form method="POST"
+      action="{% if patient %}{{ url_for('patient.book_appointment') }}{% else %}{{ url_for('admin.add_appointment') }}{% endif %}">
+
+  {# Patient selection – hidden when patient is booking for self #}
   <div class="mb-3">
     <label for="patient_id" class="form-label">Select Patient</label>
-    <select class="form-select" id="patient_id" name="patient_id" required>
-      <option value="" disabled selected>Select a patient</option>
-      {% for patient in patients %}
-        <option value="{{ patient.id }}">{{ patient.name }} ({{ patient.email }})</option>
-      {% endfor %}
-    </select>
+    {% if patient %}
+      <input type="hidden" id="patient_id" name="patient_id" value="{{ patient.id }}">
+      <input type="text" class="form-control"
+             value="{{ patient.name }} - {{ patient.email }}" readonly>
+    {% else %}
+      <select class="form-select" id="patient_id" name="patient_id" required>
+        <option value="" disabled selected>Select a patient</option>
+        {% for p in patients %}
+          <option value="{{ p.id }}">{{ p.name }} - {{ p.email }}</option>
+        {% endfor %}
+      </select>
+    {% endif %}
   </div>
 
-  <!-- Doctor Selection -->
+  {# Doctor Selection (display + modal trigger) #}
   <div class="mb-3">
-    <label for="doctor_id" class="form-label">Select Doctor</label>
-    <select class="form-select" id="doctor_id" name="doctor_id" required>
-      <option value="" disabled selected>Select a doctor</option>
-      {% for doctor in doctors %}
-        <option value="{{ doctor.id }}">{{ doctor.name }} - {{ doctor.specialty }}</option>
-      {% endfor %}
-    </select>
+    <label class="form-label">Select Doctor</label>
+
+    <!-- Hidden field that is actually submitted -->
+    <input type="hidden" id="doctor_id" name="doctor_id" required>
+
+    <!-- Readonly display of selected doctor -->
+    <div class="input-group">
+      <input type="text" class="form-control" id="doctor_display"
+             placeholder="Click 'Search' to select a doctor" readonly required>
+      <button type="button" class="btn btn-outline-secondary"
+              data-bs-toggle="modal" data-bs-target="#doctorModal">
+        Search
+      </button>
+    </div>
   </div>
 
-  <!-- Appointment Date/Time -->
+  {# Appointment Date/Time #}
   <div class="mb-3">
-    <label for="appointment_date" class="form-label">Date & Time</label>
-    <input type="datetime-local" class="form-control" id="appointment_date" name="appointment_date" required>
+    <label for="appointment_date" class="form-label">Date &amp; Time</label>
+    <input type="datetime-local" class="form-control" id="appointment_date"
+           name="appointment_date" required>
   </div>
 
-  <!-- Reason -->
+  {# Reason #}
   <div class="mb-3">
     <label for="reason" class="form-label">Reason for Visit</label>
-    <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for appointment" required></textarea>
+    <textarea class="form-control" id="reason" name="reason" rows="3"
+              placeholder="Enter reason for appointment" required></textarea>
   </div>
 
   <button type="submit" class="btn btn-primary">Book Appointment</button>
-  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+  {% if patient %}
+    <a href="{{ url_for('patient.dashboard') }}" class="btn btn-secondary">Cancel</a>
+  {% else %}
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Cancel</a>
+  {% endif %}
 </form>
+
+{# Doctor Search Modal #}
+<div class="modal fade" id="doctorModal" tabindex="-1"
+     aria-labelledby="doctorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="doctorModalLabel">Search Doctor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Search box -->
+        <input type="text" id="doctorSearch" class="form-control mb-3"
+               placeholder="Search by name or department">
+
+        <!-- List of doctors -->
+        <ul class="list-group" id="doctorList">
+          {% for doctor in doctors %}
+          <li class="list-group-item d-flex justify-content-between align-items-center doctor-item"
+              data-id="{{ doctor.id }}"
+              data-name="{{ doctor.name }}"
+              data-specialty="{{ doctor.department.name if doctor.department else '' }}">
+            <span>
+              <strong>{{ doctor.name }}</strong>
+              {% if doctor.department %}
+                - {{ doctor.department.name }}
+              {% endif %}
+            </span>
+            <button type="button" class="btn btn-sm btn-primary select-doctor-btn">
+              Select
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary"
+                data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('doctorSearch');
+  const doctorItems = document.querySelectorAll('.doctor-item');
+  const doctorIdInput = document.getElementById('doctor_id');
+  const doctorDisplayInput = document.getElementById('doctor_display');
+  const doctorModalEl = document.getElementById('doctorModal');
+  const doctorModal = doctorModalEl ? bootstrap.Modal.getOrCreateInstance(doctorModalEl) : null;
+
+  if (searchInput) {
+    searchInput.addEventListener('keyup', function () {
+      const query = this.value.toLowerCase();
+      doctorItems.forEach(function (item) {
+        const name = (item.dataset.name || '').toLowerCase();
+        const specialty = (item.dataset.specialty || '').toLowerCase();
+        if (name.includes(query) || specialty.includes(query)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
+
+  doctorItems.forEach(function (item) {
+    const btn = item.querySelector('.select-doctor-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      const id = item.dataset.id;
+      const name = item.dataset.name;
+      const specialty = item.dataset.specialty || '';
+
+      doctorIdInput.value = id;
+      doctorDisplayInput.value = specialty
+        ? (name + ' - ' + specialty)
+        : name;
+
+      if (doctorModal) {
+        doctorModal.hide();
+      }
+    });
+  });
+});
+</script>
+
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Edit Department - HMS{% endblock %}
+{% block content %}
+<h2>Edit Department</h2>
+<form method="POST" action="{{ url_for('admin.edit_department', department_id=department.id) }}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Department Name</label>
+        <input type="text" class="form-control" id="name" name="name"
+               value="{{ department.name }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description"
+                  rows="3">{{ department.description or '' }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Department</button>
+</form>
+<a href="{{ url_for('admin.delete_department', department_id=department.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this department?');">Delete Department</a>
+{% endblock %}

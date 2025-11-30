@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Edit Patient - HMS{% endblock %}
+{% block content %}
+
+<h2>Edit Patient</h2>
+
+<form method="POST" action="{{ url_for('admin.edit_patient', patient_id=patient.id) }}">
+  <div class="mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input type="text" class="form-control" id="name" name="name"
+           value="{{ patient.name }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="age" class="form-label">Age</label>
+    <input type="number" class="form-control" id="age" name="age"
+           min="0" value="{{ patient.age or '' }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="gender" class="form-label">Gender</label>
+    <select class="form-select" id="gender" name="gender" required>
+      <option value="" disabled {% if not patient.gender %}selected{% endif %}>Select gender</option>
+      <option value="male" {% if patient.gender == 'male' %}selected{% endif %}>Male</option>
+      <option value="female" {% if patient.gender == 'female' %}selected{% endif %}>Female</option>
+      <option value="other" {% if patient.gender == 'other' %}selected{% endif %}>Other</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" class="form-control" id="email" name="email"
+           value="{{ patient.email }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="phone" class="form-label">Phone</label>
+    <input type="text" class="form-control" id="phone" name="phone"
+           value="{{ patient.phone }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="address" class="form-label">Address</label>
+    <textarea class="form-control" id="address" name="address" rows="2"
+              placeholder="Enter address (optional)">{{ patient.address or '' }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="notes" class="form-label">Notes</label>
+    <textarea class="form-control" id="notes" name="notes" rows="2"
+              placeholder="Any additional notes (optional)">{{ patient.notes or '' }}</textarea>
+  </div>
+
+  <div class="mb-3">
+    <label for="status" class="form-label">Status</label>
+    <select class="form-select" id="status" name="status" required>
+      <option value="" disabled>Select status</option>
+      <option value="active"
+              {% if patient.status.name == 'active' or patient.status.name == 'ACTIVE' %}selected{% endif %}>
+        Active
+      </option>
+      <option value="inactive"
+              {% if patient.status.name == 'inactive' or patient.status.name == 'INACTIVE' %}selected{% endif %}>
+        Inactive
+      </option>
+      <option value="blacklisted"
+              {% if patient.status.name == 'blacklisted' or patient.status.name == 'BLACKLISTED' %}selected{% endif %}>
+        Blacklisted
+      </option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Reset Password (optional)</label>
+    <input type="password" class="form-control" id="password" name="password"
+           placeholder="Leave blank to keep existing password">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Update Patient</button>
+  <a href="{{ url_for('admin.search_patients') }}" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+{% endblock %}
